@@ -23,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   if (allPostsAndPages != null && allPostsAndPages.data.length != 0) {
-    let priority: number;
+    let priority = 0;
     let changeFrequency:
       | "monthly"
       | "always"
@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       | "yearly"
       | "never"
       | undefined;
-    let url: string;
+    let url = "";
 
     for (const p of allPostsAndPages.data) {
       switch (p._type) {
@@ -48,12 +48,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           url = `${domain}/posts/${p.slug}`;
           break;
       }
-      sitemap.push({
-        lastModified: p._updatedAt || new Date(),
-        priority,
-        changeFrequency,
-        url,
-      });
+      if (priority && url) {
+        sitemap.push({
+          lastModified: p._updatedAt || new Date(),
+          priority,
+          changeFrequency,
+          url,
+        });
+      }
     }
   }
 
